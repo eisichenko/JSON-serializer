@@ -17,6 +17,9 @@ def loads(string):
 
 def dumps(obj):
     if type(obj) == dict:
+        if len(obj.items()) == 0:
+            return '{}'
+        
         result = '{'
         
         for i, (key, val) in enumerate(obj.items()):
@@ -29,13 +32,15 @@ def dumps(obj):
 
         return result
     elif type(obj) == list:
+        if len(obj) == 0:
+            return '[]'
+        
         result = '['
-        list_len = len(obj)
 
         for i, val in enumerate(obj):
             result += dumps(val)
 
-            if i < list_len - 1:
+            if i < len(obj) - 1:
                 result += ', '
             else:
                 result += ']'

@@ -11,6 +11,9 @@ def parse_list(tokens):
     while len(tokens) > 0:
         json, tokens = parse(tokens)
         json_array.append(json)
+        
+        if len(tokens) == 0:
+            break
 
         t = tokens[0]
         if t == JSON_RIGHTBRACKET:
@@ -25,19 +28,24 @@ def parse_list(tokens):
 def parse_dict(tokens):
     json_object = {}
 
-    t = tokens[0]
-    if t == JSON_RIGHTBRACE:
+    if len(tokens) == 0:
+        raise Exception('Expected end-of-object brace')
+
+    if tokens[0] == JSON_RIGHTBRACE:
         return json_object, tokens[1:]
 
     while len(tokens) > 0:
         json_key = tokens[0]
         
         tokens = tokens[1:]
-
+        
         if tokens[0] != JSON_COLON:
             raise Exception(f'Expected colon after key in object, got: {t}')
 
         json_value, tokens = parse(tokens[1:])
+        
+        if len(tokens) == 0:
+            break
 
         json_object[json_key] = json_value
 

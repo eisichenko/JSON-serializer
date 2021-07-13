@@ -2,13 +2,13 @@ from json_serializer import *
 
 # d = { 1: 'a', 'asd': { True: 123, None: [ {1:'a'}, 2, False] }}
 
-d = {'a': {'b': {1: 2}}}
+d = {'a': {'b': {}}}
+loads('{')
+# s = dumps(d)
 
-s = dumps(d)
+# print(s)
 
-print(s)
+# new = loads(s)
 
-new = loads(s)
-
-print(new)
-print(new == d)
+# print(new)
+# print(new == d)

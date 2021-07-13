@@ -1,5 +1,5 @@
 from .json_constants import *
-import inspect
+
 
 
 def lex_string(string):

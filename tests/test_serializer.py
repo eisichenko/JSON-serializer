@@ -28,3 +28,23 @@ def test_files(file_fixture, obj):
     dump(obj, file_fixture)
     new_obj = load(file_fixture)
     assert new_obj == obj
+    
+def test_exceptions():
+    with pytest.raises(Exception):
+        loads('[1 2 3]')
+    with pytest.raises(Exception):
+        loads('{1:2 3:4}')
+    with pytest.raises(Exception):
+        loads('[1, 2, 3')
+    with pytest.raises(Exception):
+        loads('{1:2, 3:4')
+    with pytest.raises(Exception):
+        loads('{')
+    with pytest.raises(Exception):
+        loads('{1:2, 3 4}')
+    with pytest.raises(SyntaxError):
+        loads('"a')
+    with pytest.raises(SyntaxError):
+        loads('{1: 2 @}')
+    with pytest.raises(Exception):
+        dumps(os)
