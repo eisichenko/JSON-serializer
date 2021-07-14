@@ -1,10 +1,10 @@
 sample_dicts = [{1: 'a', 'asd': {True: 123, None: [{1.1: 'a'}, {}, 2, False]}},
                 {'a': {'b': {1: 2}}},
                 {'a': {'b': {}}},
-                {'a': 1, 'b': 2, 'c': [1, 2, 3]}
+                {'a': 1, 'b': 2, 'c': [1, 2, complex(0, -3), 3]}
                 ]
 
-sample_lists = [[1, 2, 'qwe', None, True, False, [1, {'a': {1: True}}]],
+sample_lists = [[1, 2, complex(1, 2), 'qwe', None, True, False, [1, {'a': {1: True}}]],
                 [[1, [2.2, 3], [4]]],
                 [{}, [[[[]]]]]
                 ]
@@ -13,7 +13,7 @@ sample_sets = [{1, 2, ('asd', True, False, tuple(), frozenset(['qwe', 1, None]))
                {'qwe', None, tuple(tuple(['HAHAHAHA', 1, 2, 3, False]))}
                ]
 
-single_primitives = [1, 1.2, True, False, None, 'HAHA']
+single_primitives = [1, 1.2, True, False, None, 'HAHA', complex(1, 1.2)]
 
 
 sample_bins = [bytes([1, 2, 3, 2]),

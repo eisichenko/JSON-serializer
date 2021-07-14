@@ -81,15 +81,18 @@ def unpack_iterable(obj):
 
 
 def pack_primitive(obj, root):
-    res = obj
+    if type(obj) == complex:
+        return {'__type__': type(obj).__name__, 'value': str(obj)}
     if root:
-        return {'__type__': type(obj).__name__, 'value': res}
-    return res
+        return {'__type__': type(obj).__name__, 'value': obj}
+    return obj
 
 
 def unpack_primitive(obj):
     if type(obj).__name__ in PRIMITIVES:
         return obj
     elif type(obj) == dict and 'value' in obj.keys():
+        if obj['__type__'] == complex.__name__:
+            return complex(obj['value'])
         return obj['value']
     raise Exception('Cant unpack primitive')

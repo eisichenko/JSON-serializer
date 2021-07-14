@@ -26,6 +26,7 @@ ITERABLES = {dict.__name__,
              }
 
 PRIMITIVES = {int.__name__,
+              complex.__name__,
               str.__name__,
               float.__name__,
               bool.__name__,
