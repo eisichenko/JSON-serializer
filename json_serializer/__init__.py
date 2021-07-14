@@ -1,29 +1,31 @@
 from .json_lexer import lex
 from .json_parser import parse
 from .json_constants import *
-
-
-primitives = (int, bool, str, float, type(None))
-
-def is_primitive(obj):
-    return type(obj) in primitives
+from .packer import *
 
 
 def loads(string):
     tokens = lex(string)
     result = parse(tokens)[0]
-    return result
+    return unpack(result)
 
 
 def dumps(obj):
+    return _json_dumps(pack(obj, root=True))
+
+
+def _json_dumps(obj):
     if type(obj) == dict:
         if len(obj.items()) == 0:
-            return '{}'
+            raise Exception('Empty dictionary is invalid')
         
         result = '{'
         
         for i, (key, val) in enumerate(obj.items()):
-            result += f'{dumps(key)}: {dumps(val)}'
+            if type(key) != str:
+                raise TypeError(f'Expected string key, but got {key}')
+            
+            result += f'"{key}": {_json_dumps(val)}'
 
             if i < len(obj) - 1:
                 result += ', '
@@ -38,7 +40,7 @@ def dumps(obj):
         result = '['
 
         for i, val in enumerate(obj):
-            result += dumps(val)
+            result += _json_dumps(val)
 
             if i < len(obj) - 1:
                 result += ', '
@@ -52,7 +54,7 @@ def dumps(obj):
         return 'true' if obj else 'false'
     elif type(obj) == type(None):
         return 'null'
-    elif is_primitive(obj):
+    elif type(obj).__name__ in PRIMITIVES:
         return str(obj)
     raise Exception('Invalid object type')
 

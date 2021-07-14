@@ -1,14 +1,14 @@
 from json_serializer import *
 
-# d = { 1: 'a', 'asd': { True: 123, None: [ {1:'a'}, 2, False] }}
 
-d = {'a': {'b': {}}}
-loads('{')
-# s = dumps(d)
 
-# print(s)
+d = bytes([1, 2, 3, 2])
 
-# new = loads(s)
+d = bytearray('LOLOLOLOLOLOLO', encoding='utf-8')
 
-# print(new)
-# print(new == d)
+
+print(dumps(d))
+
+print(loads(dumps(d)))
+
+print(loads(dumps(d)) == d)

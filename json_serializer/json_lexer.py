@@ -1,7 +1,6 @@
 from .json_constants import *
 
 
-
 def lex_string(string):
     result = ''
 

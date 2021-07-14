@@ -32,22 +32,24 @@ def parse_dict(tokens):
         raise Exception('Expected end-of-object brace')
 
     if tokens[0] == JSON_RIGHTBRACE:
-        return json_object, tokens[1:]
+        raise Exception('Empty dictionary is invalid')
 
     while len(tokens) > 0:
-        json_key = tokens[0]
-        
-        tokens = tokens[1:]
+        key = tokens[0]
+        if type(key) == str:
+            tokens = tokens[1:]
+        else:
+            raise Exception(f'Expected string key, got: {key}')
         
         if tokens[0] != JSON_COLON:
-            raise Exception(f'Expected colon after key in object, got: {t}')
+            raise Exception(f'Expected colon after key in object, got: {tokens[0]}')
 
-        json_value, tokens = parse(tokens[1:])
+        value, tokens = parse(tokens[1:])
         
         if len(tokens) == 0:
             break
 
-        json_object[json_key] = json_value
+        json_object[key] = value
 
         t = tokens[0]
         if t == JSON_RIGHTBRACE:
@@ -59,8 +61,11 @@ def parse_dict(tokens):
 
     raise Exception('Expected end-of-object brace')
 
-def parse(tokens):
+def parse(tokens, is_root=False):
     t = tokens[0]
+
+    if is_root and t != JSON_LEFTBRACE:
+        raise Exception('Root must be an object')
 
     if t == JSON_LEFTBRACKET:
         return parse_list(tokens[1:])
