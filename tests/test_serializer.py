@@ -88,3 +88,9 @@ def test_exceptions():
         unpack({})
     with pytest.raises(Exception):
         unpack(os)
+    with pytest.raises(Exception):
+        json_dumps({1: 2})
+    with pytest.raises(Exception):
+        json_dumps({})
+    with pytest.raises(Exception):
+        json_dumps(os)

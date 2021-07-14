@@ -11,10 +11,10 @@ def loads(string):
 
 
 def dumps(obj):
-    return _json_dumps(pack(obj, root=True))
+    return json_dumps(pack(obj, root=True))
 
 
-def _json_dumps(obj):
+def json_dumps(obj):
     if type(obj) == dict:
         if len(obj.items()) == 0:
             raise Exception('Empty dictionary is invalid')
@@ -25,7 +25,7 @@ def _json_dumps(obj):
             if type(key) != str:
                 raise TypeError(f'Expected string key, but got {key}')
             
-            result += f'"{key}": {_json_dumps(val)}'
+            result += f'"{key}": {json_dumps(val)}'
 
             if i < len(obj) - 1:
                 result += ', '
@@ -40,7 +40,7 @@ def _json_dumps(obj):
         result = '['
 
         for i, val in enumerate(obj):
-            result += _json_dumps(val)
+            result += json_dumps(val)
 
             if i < len(obj) - 1:
                 result += ', '
