@@ -84,3 +84,7 @@ def test_exceptions():
         dumps(os)
     with pytest.raises(Exception):
         parse(['LOL'], is_root=True)
+    with pytest.raises(Exception):
+        unpack({})
+    with pytest.raises(Exception):
+        unpack(os)
