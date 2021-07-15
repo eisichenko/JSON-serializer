@@ -32,4 +32,11 @@ PRIMITIVES = {int.__name__,
               type(None).__name__
               }
 
-ALL_TYPES = ITERABLES.union(PRIMITIVES)
+CODE_TYPE = 'code'
+FUNCTION_TYPE = 'function'
+CLASS_TYPE = 'class'
+OBJECT_TYPE = 'object'
+
+COMPLEX = {FUNCTION_TYPE, CLASS_TYPE, OBJECT_TYPE, CODE_TYPE}
+
+ALL_TYPES = ITERABLES.union(PRIMITIVES).union(COMPLEX)
