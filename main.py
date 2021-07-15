@@ -1,9 +1,5 @@
 from json_serializer import *
 
-d = complex(1, 2)
-
-print(dumps(d))
+d = [1, 2, 3]
 
 print(loads(dumps(d)))
-
-print(loads(dumps(d)) == d)

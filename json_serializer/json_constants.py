@@ -21,8 +21,7 @@ ITERABLES = {dict.__name__,
              set.__name__,
              frozenset.__name__,
              bytes.__name__,
-             bytearray.__name__,
-             memoryview.__name__
+             bytearray.__name__
              }
 
 PRIMITIVES = {int.__name__,

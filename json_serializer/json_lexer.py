@@ -2,18 +2,24 @@ from .json_constants import *
 
 
 def lex_string(string):
-    result = ''
-
     if string[0] == JSON_QUOTE:
         string = string[1:]
     else:
         return None, string
     
-    for c in string:
-        if c == JSON_QUOTE:            
-            return result, string[len(result)+1:]
+    result = ''
+    
+    i = 0
+    
+    while i < len(string):
+        if i < len(string) - 1 and string[i] == '\\' and string[i + 1] == '"':
+            result += string[i + 1]
+            i += 1
+        elif string[i] == JSON_QUOTE:
+            return result, string[i+1:]
         else:
-            result += c
+            result += string[i]
+        i += 1
         
     raise SyntaxError('Expected end of string quote')
 

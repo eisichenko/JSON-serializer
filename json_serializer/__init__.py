@@ -25,6 +25,7 @@ def json_dumps(obj):
             if type(key) != str:
                 raise TypeError(f'Expected string key, but got {key}')
             
+            key = key.replace('"', '\\"')
             result += f'"{key}": {json_dumps(val)}'
 
             if i < len(obj) - 1:
@@ -49,6 +50,7 @@ def json_dumps(obj):
 
         return result
     elif type(obj) == str:
+        obj = obj.replace('"', '\\"')
         return f'"{obj}"'
     elif type(obj) == bool:
         return 'true' if obj else 'false'
