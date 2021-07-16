@@ -1,6 +1,6 @@
 from json_serializer.json_parser import parse_dict
 import pytest
-from .simple_objects import *
+from .samples.simple_objects import *
 from json_serializer import *
 import os
 

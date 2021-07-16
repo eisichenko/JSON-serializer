@@ -1,25 +1,41 @@
 from json_serializer import *
 import inspect
-from tests.functions import *
+from tests.samples.functions import *
+from tests.samples.class_types import *
 from pprint import pprint
 
 
+def smth(f):
+    def wrapper(*args, **kwargs):
+        res = f()
+        print('HI')
+        return res
+    return wrapper
+
+# @smth
+# def f():
+#     return 'HELLO'
+
+# def f1():
+#     return 'HELLO'
+
 class A():
+    def __init__(self, name):
+        self.name = name
+        
     def f(self):
-        return 'OBJ'
+        return 'YAY!'
 
-# pprint(dict(inspect.getmembers(fib.__code__)))
+class Simple():
+    def __init__(self, name):
+        self.name = name
+    
+    def get_name(self):
+        return self.name
+    
+    def __str__(self):
+        return self.name
+    
+a = Simple('qweqwe')
 
-test = local_and_global_func_and_lambda
-
-pprint(pack(test))
-
-new_f = unpack(pack(unpack(pack(test))))
-
-print(new_f.__name__)
-
-print(new_f)
-print(new_f(123))
-
-print(test(123))
-
+print(loads(dumps(a)))

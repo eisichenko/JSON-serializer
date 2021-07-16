@@ -23,9 +23,12 @@ def function_with_args(a, b = 'default', *args):
     qwe = CONST
     return str(local_var) + b + str(len(args))
 
+
 simple_lambda = lambda x : x ** 2
 
+
 nested_lambda_with_global = lambda x : lambda y : str((x + y) / 2 ** CONST + fib(5)) + say_hi()
+
 
 def local_and_global_func_and_lambda(n):
     def h(n):
@@ -34,3 +37,10 @@ def local_and_global_func_and_lambda(n):
     l = lambda n: n ** 0.5
 
     return str(l(h(n) + h(n))) + nested_lambda_with_global(1)(2)
+
+
+def func_with_nested_class(string):
+    class B():
+        def f(self):
+            return CONST
+    return str(B().f()) + string

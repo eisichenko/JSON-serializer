@@ -3,7 +3,7 @@ import string
 
 
 MAX_DEPTH = 6
-MAX_LENGTH = 5
+MAX_LENGTH = 6
 MAX_SET_LENGTH = 40
 
 
@@ -20,7 +20,7 @@ def random_complex():
 
 
 def random_string(n=random.randint(0, MAX_LENGTH)):
-    symbols = string.digits + string.ascii_letters + ' '
+    symbols = string.digits + string.ascii_letters + ' "'
     symbols = symbols.replace('\\', '')
     return ''.join(random.choice(symbols) for _ in range(n))
 
@@ -120,12 +120,8 @@ def random_dict(n=random.randint(0, MAX_LENGTH), depth=0):
         else:
             key = key_func()
         
-        while key in res.keys():
-            key_func = random.choice(hashable)
-            if key_func == random_tuple:
-                key = key_func(depth=depth+1, is_hashable=True)
-            else:
-                key = key_func()
+        if key in res.keys():
+            continue
             
         func = random.choice(all_values)
         

@@ -1,7 +1,8 @@
 from .json_constants import *
+from .helper import *
 import builtins
 import inspect
-from types import FunctionType, CodeType
+from types import FunctionType, CodeType, LambdaType
 
 
 def get_type(name):
@@ -19,6 +20,10 @@ def is_iterable(obj):
     return hasattr(obj, '__iter__') and type(obj) != str
 
 
+def is_function(obj):
+    return inspect.isfunction(obj) or inspect.ismethod(obj) or isinstance(obj, LambdaType)
+
+
 def pack(obj, root=False):
     if is_iterable(obj):
         return pack_iterable(obj, root)
@@ -26,9 +31,11 @@ def pack(obj, root=False):
         return pack_primitive(obj, root)
     elif inspect.iscode(obj):
         return pack_code(obj)
-    elif callable(obj):
+    elif is_function(obj):
         return pack_callable(obj)
-    raise TypeError(f'Unknown type {type(obj)}')
+    elif inspect.isclass(obj):
+        return pack_class(obj)
+    return pack_object(obj)
 
 
 def unpack(obj):
@@ -44,6 +51,10 @@ def unpack(obj):
             return unpack_code(obj)
         elif obj['__type__'] == FUNCTION_TYPE:
             return unpack_callable(obj)
+        elif obj['__type__'] == CLASS_TYPE:
+            return unpack_class(obj)
+        elif obj['__type__'] == OBJECT_TYPE:
+            return unpack_object(obj)
     elif type(obj).__name__ in ITERABLES:
         return unpack_iterable(obj)
     elif type(obj).__name__ in PRIMITIVES:
@@ -151,22 +162,25 @@ def unpack_code(obj):
     return res
 
 
-def get_globals_from_code(code, current_globals):
+def get_globals_from_code(code, current_globals, obj_name):
     res = {}
     for name in code.co_names:
-        if name in current_globals and name != code.co_name:
+        if name in current_globals and name != obj_name and name not in res.keys():
             res[name] = current_globals[name]
         
     for item in code.co_consts:
         if inspect.iscode(item):
-            res.update(get_globals_from_code(item, current_globals))
+            res.update(get_globals_from_code(item, current_globals, obj_name))
     return res
 
 
 def pack_callable(obj):
+    if inspect.ismethod(obj):
+        obj = obj.__func__
     res = {'__type__': FUNCTION_TYPE,
            '__code__': pack(obj.__code__),
-           '__globals__': pack(get_globals_from_code(obj.__code__, obj.__globals__))
+           '__qualname__': obj.__qualname__,
+           '__globals__': pack(get_globals_from_code(obj.__code__, obj.__globals__, obj.__name__))
            }
     return res
 
@@ -177,4 +191,67 @@ def unpack_callable(obj):
     
     new_func = FunctionType(unpack(obj['__code__']), func_globals)
     new_func.__globals__[new_func.__name__] = new_func
+    new_func.__qualname__ = obj['__qualname__']
     return new_func
+
+
+def pack_class(obj):
+    attrs = dict(filter(lambda pair: pair[0] != '__dict__' and pair[0] != '__weakref__', vars(obj).items()))
+    bases = tuple(filter(lambda base: not getattr(builtins, base.__name__, None) and not getattr(builtins, base.__qualname__, None), obj.__bases__))
+    
+    for k in attrs:
+        attrs[k] = getattr(obj, k)
+    
+    res = {'__type__': CLASS_TYPE,
+           '__name__': obj.__name__,
+           '__qualname__': obj.__qualname__,
+           '__bases__': pack(bases),
+           '__attrs__': pack(attrs)}
+    
+    return res
+
+
+def unpack_class(obj):
+    attrs = unpack(obj['__attrs__'])
+    bases = unpack(obj['__bases__'])
+    
+    res = type(obj['__name__'], bases, attrs)
+    res.__qualname__ = obj['__qualname__']
+    bind_methods(res)
+    return res
+
+
+def pack_object(obj):
+    attrs = {}
+    for k, v in vars(obj).items():
+        attrs[k] = pack(v)
+    
+    res = {'__type__': OBJECT_TYPE,
+           '__class__': pack(obj.__class__),
+           '__attrs__': pack(attrs)}
+    return res
+
+from pprint import pprint
+
+def unpack_object(obj):
+    obj_class = unpack(obj['__class__'])
+    attrs = unpack(obj['__attrs__'])
+    
+    def __init__(self):
+        pass
+
+    tmp = getattr(obj_class, '__init__', None)
+    setattr(obj_class, '__init__', __init__)
+    
+    res = obj_class()
+    
+    setattr(obj_class, '__init__', tmp)
+    
+    res.__class__ = obj_class
+    
+    for k, v in attrs.items():
+        setattr(res, k, v)
+        
+    bind_methods(res)
+
+    return res
