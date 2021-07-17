@@ -32,6 +32,19 @@ def test_functions_with_decorators():
     assert func_with_decorators('SOME MESSAGE') == loads(dumps(func_with_decorators))('SOME MESSAGE')
 
 
+def test_functions_with_defaults():
+    assert function_with_defaults(999) == loads(dumps(function_with_defaults))(999)
+    assert function_with_defaults(a=13) == loads(dumps(function_with_defaults))(a=13)
+    assert function_with_defaults(55, 64) == loads(dumps(function_with_defaults))(55, 64)
+    assert function_with_defaults(999, 12333, -123) == loads(dumps(function_with_defaults))(999, 12333, -123)
+    assert function_with_defaults(a=999, b=12333, c=-123) == loads(dumps(function_with_defaults))(a=999, b=12333, c=-123)
+    
+    with pytest.raises(TypeError):
+        assert function_with_defaults() == loads(dumps(function_with_defaults))()
+
+    assert function_with_defaults(999, 0, 'qwe', 3, 1, 2, 6, PRESS=666, F=131313) == loads(dumps(function_with_defaults))(999, 0, 'qwe', 3, 1, 2, 6, PRESS=666, F=131313)
+
+
 def test_class_A():
     new_type = loads(dumps(A))
     new_obj = new_type('LOL')

@@ -64,3 +64,7 @@ def smth_decorator1(f):
 @smth_decorator1
 def func_with_decorators(string):
     return string
+
+
+def function_with_defaults(a, b=123, c='asd', *args, **kwargs):
+    return str(a) + str(b) + str(c) + str(args) + str(kwargs)

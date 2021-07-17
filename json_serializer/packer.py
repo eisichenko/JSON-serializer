@@ -180,6 +180,7 @@ def pack_callable(obj):
            '__code__': pack(obj.__code__),
            '__qualname__': obj.__qualname__,
            '__closure__': pack(closure),
+           '__argdefs__': pack(get_argdefs(obj)),
            '__globals__': pack(get_globals_from_code(obj.__code__, obj.__globals__, obj.__name__))
            }
     return res
@@ -192,10 +193,16 @@ def unpack_callable(obj):
     else:
         closure = (cell,)
     
+    argdefs = unpack(obj['__argdefs__'])
+    
     func_globals = unpack(obj['__globals__'])
     func_globals['__builtins__'] = builtins
     
-    new_func = FunctionType(code=unpack(obj['__code__']), globals=func_globals, closure=closure)
+    new_func = FunctionType(code=unpack(obj['__code__']), 
+                            globals=func_globals, 
+                            closure=closure,
+                            argdefs=argdefs)
+    
     new_func.__globals__[new_func.__name__] = new_func
     new_func.__qualname__ = obj['__qualname__']
     

@@ -32,3 +32,13 @@ def make_cell(val=None):
     def closure():
         return x
     return closure.__closure__[0]
+
+
+def get_argdefs(f):
+    d = inspect.signature(f).parameters
+    argdefs = []
+
+    for k in d:
+        if d[k].default != inspect._empty:
+            argdefs.append(d[k].default)
+    return tuple(argdefs)
