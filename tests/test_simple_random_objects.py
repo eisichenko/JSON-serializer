@@ -2,6 +2,7 @@ import pytest
 from .simple_object_generator import *
 from json_serializer import *
 
+
 NUMBER_OF_TESTS = 30
 
 @pytest.mark.parametrize('obj', [random_dict() for _ in range(NUMBER_OF_TESTS)])

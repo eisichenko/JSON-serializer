@@ -1,5 +1,5 @@
 from .simple_object_generator import *
-import pytest
+
 
 def test_generators():
     assert type(random_int()) == int

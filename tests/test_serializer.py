@@ -1,4 +1,4 @@
-from json_serializer.json_parser import parse_dict
+from json_serializer.json_parser import parse_dict, parse_list
 import pytest
 from .samples.simple_objects import *
 from json_serializer import *
@@ -96,3 +96,7 @@ def test_exceptions():
         json_dumps(os)
     with pytest.raises(Exception):
         loads('')
+    with pytest.raises(Exception):
+        parse_list([1, ',', 2, ']'], 1)
+    with pytest.raises(Exception):
+        parse_dict(['}'], 0)

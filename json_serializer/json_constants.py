@@ -14,6 +14,7 @@ JSON_FALSE = 'false'
 JSON_TRUE = 'true'
 JSON_NULL = 'null'
 
+
 NUMBER_CHARACTERS = [str(digit) for digit in range(0, 10)] + ['-', 'e', '.']
 
 
