@@ -9,15 +9,11 @@ def get_type(name):
     try:
         return getattr(builtins, name)
     except:
-        try:
-            obj = globals()[name]
-        except:
-            raise AttributeError('Invalid type')
-        return repr(obj) if isinstance(obj, type) else None
+        raise AttributeError('Invalid type')
 
 
 def is_iterable(obj):
-    return hasattr(obj, '__iter__') and type(obj) != str
+    return hasattr(obj, '__iter__') and type(obj) != str and not inspect.isclass(obj) and type(obj).__name__ in ITERABLES
 
 
 def is_function(obj):
@@ -86,9 +82,6 @@ def unpack_iterable(obj):
             return res
         elif obj['__type__'] in ITERABLES:
             obj_type = get_type(obj['__type__'])
-
-            if obj_type == None:
-                raise AttributeError('No type')
 
             res = []
             for item in obj['value']:
@@ -177,21 +170,35 @@ def get_globals_from_code(code, current_globals, obj_name):
 def pack_callable(obj):
     if inspect.ismethod(obj):
         obj = obj.__func__
+    
+    if not obj.__closure__:
+        closure = None
+    else:
+        closure = obj.__closure__[0].cell_contents
+
     res = {'__type__': FUNCTION_TYPE,
            '__code__': pack(obj.__code__),
            '__qualname__': obj.__qualname__,
+           '__closure__': pack(closure),
            '__globals__': pack(get_globals_from_code(obj.__code__, obj.__globals__, obj.__name__))
            }
     return res
 
 
 def unpack_callable(obj):
+    cell = make_cell(unpack(obj['__closure__']))
+    if cell == None:
+        closure = None
+    else:
+        closure = (cell,)
+    
     func_globals = unpack(obj['__globals__'])
     func_globals['__builtins__'] = builtins
     
-    new_func = FunctionType(unpack(obj['__code__']), func_globals)
+    new_func = FunctionType(code=unpack(obj['__code__']), globals=func_globals, closure=closure)
     new_func.__globals__[new_func.__name__] = new_func
     new_func.__qualname__ = obj['__qualname__']
+    
     return new_func
 
 
@@ -224,14 +231,13 @@ def unpack_class(obj):
 def pack_object(obj):
     attrs = {}
     for k, v in vars(obj).items():
-        attrs[k] = pack(v)
+        attrs[k] = v
     
     res = {'__type__': OBJECT_TYPE,
            '__class__': pack(obj.__class__),
            '__attrs__': pack(attrs)}
     return res
 
-from pprint import pprint
 
 def unpack_object(obj):
     obj_class = unpack(obj['__class__'])

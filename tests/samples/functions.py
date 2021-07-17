@@ -4,6 +4,7 @@ QWE = 666
 def say_hi():
     return 'hello from say_hi'
 
+
 def f():
     def g():
         def h():
@@ -44,3 +45,22 @@ def func_with_nested_class(string):
         def f(self):
             return CONST
     return str(B().f()) + string
+
+
+def smth_decorator(f):
+    def wrapper(*args, **kwargs):
+        res = f(*args, **kwargs)
+        return str(res) + "HI!!!"
+    return wrapper
+
+def smth_decorator1(f):
+    def wrapper(*args, **kwargs):
+        res = f(*args, **kwargs)
+        return str(res) + "HELL!!!"
+    return wrapper
+
+
+@smth_decorator
+@smth_decorator1
+def func_with_decorators(string):
+    return string

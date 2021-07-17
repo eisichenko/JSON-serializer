@@ -23,3 +23,12 @@ def bind_method(instance, func, as_name=None):
     bound_method = func.__get__(instance, instance.__class__)
     
     setattr(instance, as_name, bound_method)
+    
+
+def make_cell(val=None):
+    if val == None:
+        return None
+    x = val
+    def closure():
+        return x
+    return closure.__closure__[0]

@@ -1,8 +1,15 @@
-from typing import Generic
 from .samples.functions import *
 from .samples.class_types import *
 from .samples.object_types import *
 from json_serializer import *
+import pytest
+
+
+def test_get_type_from_string():
+    assert list == get_type('list')
+    
+    with pytest.raises(AttributeError):
+        get_type('AJSKDJASDJAKSFH')
 
 
 def test_functions_with_globals():
@@ -19,6 +26,10 @@ def test_multiple_pack_and_unpack():
 def test_lambdas():
     assert simple_lambda(123) == loads(dumps(simple_lambda))(123)
     assert nested_lambda_with_global(666)(1313) == loads(dumps(nested_lambda_with_global(666)(1313)))
+
+
+def test_functions_with_decorators():
+    assert func_with_decorators('SOME MESSAGE') == loads(dumps(func_with_decorators))('SOME MESSAGE')
 
 
 def test_class_A():
@@ -57,12 +68,71 @@ def test_inheritance():
     assert tuple(map(lambda x: x.__name__, new.__bases__)) == tuple(map(lambda x: x.__name__, E.__bases__))
     assert new().f() == E().f()
     assert new().g() == E().g()
+
+
+def test_class_H():
+    new = loads(dumps(H))
+    assert new.CLASS_VAR == H.CLASS_VAR
+    
+
+def test_class_Vector():
+    arr = [i for i in range(100)]
+    obj = Vector(arr)
+    new = loads(dumps(Vector))(arr)
+    
+    res_obj = []
+    res_new = []
+    
+    for i in new:
+        res_new.append(i)
+    
+    for i in obj:
+        res_obj.append(i)
+    
+    assert res_obj == res_new
+
     
 
 def test_objects():
-    a = Simple('qweqwe')
-    new = loads(dumps(a))
+    obj = Simple('qweqwe')
+    new = loads(dumps(obj))
+    assert obj == new
+
+    obj = Medium()
+    new = loads(dumps(obj))
+    assert obj == new
     
-    assert str(a) == str(new)
-    assert a.get_name() == new.get_name()
-    assert a.__class__.__name__ == new.__class__.__name__
+    obj = Hard('AHAHAH')
+    new = loads(dumps(obj))
+    assert obj == new
+    
+    obj = [Simple('GGG'), Medium(), Hard('JJJ')]
+    new = loads(dumps(obj))
+    assert obj[0] == new[0]
+    assert obj[1] == new[1]
+    assert obj[2] == new[2]
+
+
+def test_inheritance_in_objects():
+    obj = G()
+    new = loads(dumps(obj))
+    
+    assert obj.f() == new.f()
+    assert obj.g() == new.g()
+    
+
+def test_iterable_objects():
+    arr = [i for i in range(100)]
+    obj = Vector(arr)
+    new = loads(dumps(obj))
+    
+    res_obj = []
+    res_new = []
+    
+    for i in new:
+        res_new.append(i)
+    
+    for i in obj:
+        res_obj.append(i)
+    
+    assert res_obj == res_new

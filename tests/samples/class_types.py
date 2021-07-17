@@ -62,3 +62,7 @@ class E(C, D):
 
 class G(E):
     pass
+
+
+class H():
+    CLASS_VAR = CONST
