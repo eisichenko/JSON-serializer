@@ -5,6 +5,9 @@ from .packer import *
 
 
 def loads(string):
+    if len(string) == 0:
+        raise Exception('No string to load')
+    
     tokens = lex(string)
     result = parse(tokens)[0]
     return unpack(result)
@@ -53,9 +56,9 @@ def json_dumps(obj):
         obj = obj.replace('"', '\\"')
         return f'"{obj}"'
     elif type(obj) == bool:
-        return 'true' if obj else 'false'
+        return JSON_TRUE if obj else JSON_FALSE
     elif type(obj) == type(None):
-        return 'null'
+        return JSON_NULL
     elif type(obj).__name__ in PRIMITIVES:
         return str(obj)
     raise Exception('Invalid object type')

@@ -94,3 +94,5 @@ def test_exceptions():
         json_dumps({})
     with pytest.raises(Exception):
         json_dumps(os)
+    with pytest.raises(Exception):
+        loads('')

@@ -3,7 +3,7 @@ import string
 
 
 MAX_DEPTH = 6
-MAX_LENGTH = 6
+MAX_LENGTH = 9
 MAX_SET_LENGTH = 40
 
 

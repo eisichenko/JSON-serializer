@@ -10,9 +10,11 @@ JSON_WHITESPACE = [' ', '\t', '\b', '\n', '\r']
 JSON_SYNTAX = [JSON_COMMA, JSON_COLON, JSON_LEFTBRACKET, JSON_RIGHTBRACKET,
                JSON_LEFTBRACE, JSON_RIGHTBRACE]
 
-FALSE_LEN = len('false')
-TRUE_LEN = len('true')
-NULL_LEN = len('null')
+JSON_FALSE = 'false'
+JSON_TRUE = 'true'
+JSON_NULL = 'null'
+
+NUMBER_CHARACTERS = [str(digit) for digit in range(0, 10)] + ['-', 'e', '.']
 
 
 ITERABLES = {dict.__name__,
